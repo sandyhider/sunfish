@@ -181,7 +181,7 @@ class Position(namedtuple('Position', 'board score wc bc ep kp')):
     def move(self, move):
         i, j = move
         p, q = self.board[i], self.board[j]
-        put = lambda board, i, p: board[:i] + p + board[i+1:]
+        put = lambda board, i, p: board[:i] + p + board[i+1:]  # puts piece p at place i
         # Copy variables and reset ep and kp
         board = self.board
         wc, bc, ep, kp = self.wc, self.bc, 0, 0
@@ -224,7 +224,7 @@ class Position(namedtuple('Position', 'board score wc bc ep kp')):
         if abs(j-self.kp) < 2:
             score += pst['K'][119-j]
         # Castling
-        if p == 'K' and abs(i-j) == 2:
+        if p == 'K' and abs(i-j) == 2:  ## TODO STH should be able to remove this one as we don't have checks.
             score += pst['R'][(i+j)//2]
             score -= pst['R'][A1 if j < i else H1]
         # Special pawn stuff
@@ -233,6 +233,7 @@ class Position(namedtuple('Position', 'board score wc bc ep kp')):
                 score += pst['Q'][j] - pst['P'][j]
             if j == self.ep:
                 score += pst['P'][119-(j+S)]
+                # TODO STH This is a take, so don't we need to remove the score of the other pawn.
         return score
 
 ###############################################################################
@@ -247,7 +248,7 @@ Entry = namedtuple('Entry', 'lower upper')
 class LRUCache:
     '''Store items in the order the keys were last added'''
     def __init__(self, size):
-        self.od = OrderedDict()
+        self.od = OrderedDict()  # front of od is least recently used.
         self.size = size
 
     def get(self, key, default=None):
